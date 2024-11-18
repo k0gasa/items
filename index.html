@@ -1,16 +1,16 @@
 <html><head><base href="." target="_blank" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WZW Items</title>
+<title>Dark Mode Item Table</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg-primary: #0a0a0d;
-  --bg-secondary: #0f1014;  
+  --bg-secondary: #0f1014;  /* Changed from #131419 to be closer to bg-primary */
   --text-primary: #e5e7eb;
   --text-secondary: #8f929a;
-  --accent: #ca3b52;         
-  --accent-hover: #e34a63;   
+  --accent: #ca3b52;         /* Changed from #3b52ca to #ca3b52 (warmer red) */
+  --accent-hover: #e34a63;   /* Changed from #4a63e3 to #e34a63 */
   --border: #1f2127;
   --table-hover: #16181f;
 }
@@ -236,7 +236,7 @@ body {
   <div class="filter-row">
     <input type="text" class="search-bar" placeholder="Search..." id="searchInput">
     <div class="type-filters" id="typeFilters">
-      
+      <!-- Type filters will be populated here -->
     </div>
     <a href="https://discord.gg/9ykXAGHCT9" class="discord-button">
         Discord
@@ -284,7 +284,7 @@ const searchInput = document.getElementById('searchInput');
 const paginationContainer = document.getElementById('pagination');
 const typeFiltersContainer = document.getElementById('typeFilters');
 
-const ITEMS_PER_PAGE = 4; // Changed to 4 items per page
+const ITEMS_PER_PAGE = 4;
 let currentPage = 1;
 let activeType = 'all';
 
@@ -323,16 +323,28 @@ function renderTable(itemsToRender) {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedItems = itemsToRender.slice(startIndex, endIndex);
-
-  itemsContainer.innerHTML = paginatedItems.map(item => `
+  
+  const createTableRow = (item) => `
     <tr>
-      <td><img src="${item.Photo}" alt="${item.item} preview" class="table-image" loading="lazy"></td>
+      <td>
+        <div style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+          <img 
+            src="${item.Photo}" 
+            alt="${item.item} preview" 
+            class="table-image" 
+            style="opacity: 0; transition: opacity 0.3s ease;"
+            onload="this.style.opacity = '1'"
+            loading="lazy"
+          >
+        </div>
+      </td>
       <td>${item.ID}</td>
       <td>${item.item}</td>
       <td><span class="type-badge">${item.type}</span></td>
     </tr>
-  `).join('');
+  `;
 
+  itemsContainer.innerHTML = paginatedItems.map(createTableRow).join('');
   renderPagination(itemsToRender.length);
 }
 
@@ -340,15 +352,32 @@ function renderPagination(totalItems) {
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
   
   let paginationHTML = `
+    <button onclick="changePage(1)" ${currentPage === 1 ? 'disabled' : ''}>
+      First
+    </button>
     <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
       Previous
     </button>
   `;
 
-  for (let i = 1; i <= totalPages; i++) {
+  if (currentPage > 1) {
     paginationHTML += `
-      <button onclick="changePage(${i})" class="${currentPage === i ? 'active' : ''}">
-        ${i}
+      <button onclick="changePage(${currentPage - 1})">
+        ${currentPage - 1}
+      </button>
+    `;
+  }
+
+  paginationHTML += `
+    <button class="active">
+      ${currentPage}
+    </button>
+  `;
+
+  if (currentPage < totalPages) {
+    paginationHTML += `
+      <button onclick="changePage(${currentPage + 1})">
+        ${currentPage + 1}
       </button>
     `;
   }
@@ -356,6 +385,9 @@ function renderPagination(totalItems) {
   paginationHTML += `
     <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
       Next
+    </button>
+    <button onclick="changePage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''}>
+      Last
     </button>
   `;
 
@@ -383,6 +415,7 @@ function updateFilteredItems() {
                          item.type === activeType);
     return matchesSearch && matchesType;
   });
+  currentPage = 1; // Reset to first page when filtering
   renderTable(filteredItems);
 }
 
