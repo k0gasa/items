@@ -215,6 +215,10 @@ body {
   transition: all 0.2s ease;
 }
 
+.pagination button.edge-button {
+  margin: 0 1.5rem;  /* Added margin for first/last buttons */
+}
+
 .pagination button:hover:not(:disabled) {
   border-color: var(--accent);
   color: var(--text-primary);
@@ -354,11 +358,8 @@ function renderPagination(totalItems) {
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
   
   let paginationHTML = `
-    <button onclick="changePage(1)" ${currentPage === 1 ? 'disabled' : ''}>
+    <button class="edge-button" onclick="changePage(1)" ${currentPage === 1 ? 'disabled' : ''}>
       First
-    </button>
-    <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
-      Previous
     </button>
   `;
 
@@ -381,14 +382,11 @@ function renderPagination(totalItems) {
       <button onclick="changePage(${currentPage + 1})">
         ${currentPage + 1}
       </button>
-    `;
+  `;
   }
 
   paginationHTML += `
-    <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
-      Next
-    </button>
-    <button onclick="changePage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''}>
+    <button class="edge-button" onclick="changePage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''}>
       Last
     </button>
   `;
