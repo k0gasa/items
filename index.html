@@ -1,0 +1,393 @@
+<html><head><base href="." target="_blank" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WZW Items</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0a0d;
+  --bg-secondary: #0f1014;  
+  --text-primary: #e5e7eb;
+  --text-secondary: #8f929a;
+  --accent: #ca3b52;         
+  --accent-hover: #e34a63;   
+  --border: #1f2127;
+  --table-hover: #16181f;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.filter-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.discord-button {
+  padding: 0.625rem 1.25rem;
+  background: #5865F2;
+  border: 1px solid #4752C4;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  flex-shrink: 0;
+  font-weight: bold;
+}
+
+.discord-button:hover {
+  background: #4752C4;
+  transform: translateY(-1px);
+}
+
+.search-bar {
+  width: 250px;
+  flex-shrink: 0;
+  padding: 0.875rem 1.25rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  transition: border-color 0.2s ease;
+}
+
+.search-bar:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.type-filters {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0;
+  flex-grow: 1;
+  padding-bottom: 0;
+}
+
+.type-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.type-filter {
+  padding: 0.625rem 1.25rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.type-filter:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.type-filter.active {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.table-container {
+  margin-bottom: 0;
+}
+
+.items-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: var(--bg-secondary);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.items-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.items-table tr:hover {
+  background-color: var(--table-hover);
+}
+
+.items-table th,
+.items-table td {
+  padding: 0.75rem 1.25rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.items-table th {
+  padding: 0.75rem 1.25rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  background-color: rgba(31, 33, 39, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.items-table tr:last-child td {
+  border-bottom: none;
+}
+
+.items-table td:first-child {
+  text-align: center;
+}
+
+.table-image {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.table-image:hover {
+  transform: scale(1.05);
+}
+
+.type-badge {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  background-color: rgba(10, 10, 13, 0.5);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  display: inline-block;
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 0.5rem 0;
+  padding: 0.5rem 0;
+}
+
+.pagination button {
+  padding: 0.75rem 1.25rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.pagination button.active {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="filter-row">
+    <input type="text" class="search-bar" placeholder="Search..." id="searchInput">
+    <div class="type-filters" id="typeFilters">
+      
+    </div>
+    <a href="https://discord.gg/9ykXAGHCT9" class="discord-button">
+        Discord
+    </a>
+  </div>
+
+  <div class="table-container">
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody id="itemsContainer">
+        <!-- Items will be populated here -->
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination" id="pagination">
+    <!-- Pagination buttons will be populated here -->
+  </div>
+</div>
+
+<script>
+let items = [];
+
+fetch('garments.json')
+  .then(response => response.json())
+  .then(data => {
+    items = data;
+    filteredItems = [...items];
+    renderTable(items);
+  })
+  .catch(error => {
+    console.error('Error loading items:', error);
+    // Optionally add error handling UI here
+  });
+
+const itemsContainer = document.getElementById('itemsContainer');
+const searchInput = document.getElementById('searchInput');
+const paginationContainer = document.getElementById('pagination');
+const typeFiltersContainer = document.getElementById('typeFilters');
+
+const ITEMS_PER_PAGE = 4; // Changed to 4 items per page
+let currentPage = 1;
+let activeType = 'all';
+
+const predefinedTypes = [
+  'all',
+  'torso',
+  'hair',
+  'legs',
+  'face',
+  'feet',
+  'hands',
+  'skinz',
+  'other'
+];
+
+typeFiltersContainer.innerHTML = predefinedTypes.map(type => `
+  <button 
+    class="type-filter ${type === 'all' ? 'active' : ''}" 
+    data-type="${type}"
+    onclick="filterByType('${type}')"
+  >
+    ${type.charAt(0).toUpperCase() + type.slice(1)}
+  </button>
+`).join('');
+
+function filterByType(type) {
+  activeType = type;
+  document.querySelectorAll('.type-filter').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.type === type);
+  });
+  currentPage = 1;
+  updateFilteredItems();
+}
+
+function renderTable(itemsToRender) {
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const paginatedItems = itemsToRender.slice(startIndex, endIndex);
+
+  itemsContainer.innerHTML = paginatedItems.map(item => `
+    <tr>
+      <td><img src="${item.Photo}" alt="${item.item} preview" class="table-image" loading="lazy"></td>
+      <td>${item.ID}</td>
+      <td>${item.item}</td>
+      <td><span class="type-badge">${item.type}</span></td>
+    </tr>
+  `).join('');
+
+  renderPagination(itemsToRender.length);
+}
+
+function renderPagination(totalItems) {
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  
+  let paginationHTML = `
+    <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+      Previous
+    </button>
+  `;
+
+  for (let i = 1; i <= totalPages; i++) {
+    paginationHTML += `
+      <button onclick="changePage(${i})" class="${currentPage === i ? 'active' : ''}">
+        ${i}
+      </button>
+    `;
+  }
+
+  paginationHTML += `
+    <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+      Next
+    </button>
+  `;
+
+  paginationContainer.innerHTML = paginationHTML;
+}
+
+function changePage(page) {
+  const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+  if (page < 1 || page > totalPages) return;
+  
+  currentPage = page;
+  renderTable(filteredItems);
+}
+
+let filteredItems = [...items];
+
+function updateFilteredItems() {
+  const searchTerm = searchInput.value.toLowerCase();
+  filteredItems = items.filter(item => {
+    const matchesSearch = item.item.toLowerCase().includes(searchTerm) || 
+                         item.ID.includes(searchTerm);
+    const matchesType = activeType === 'all' || 
+                       (activeType === 'other' ? 
+                         ['wings', 'symbz', 'tattoo', 'accessory'].includes(item.type) : 
+                         item.type === activeType);
+    return matchesSearch && matchesType;
+  });
+  renderTable(filteredItems);
+}
+
+searchInput.addEventListener('input', updateFilteredItems);
+
+// Initial render
+</script>
+</body></html>
