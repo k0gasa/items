@@ -1,16 +1,16 @@
 <html><head><base href="." target="_blank" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dark Mode Item Table</title>
+<title>WZW Items</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg-primary: #0a0a0d;
-  --bg-secondary: #0f1014;  /* Changed from #131419 to be closer to bg-primary */
+  --bg-secondary: #0f1014;  
   --text-primary: #e5e7eb;
   --text-secondary: #8f929a;
-  --accent: #ca3b52;         /* Changed from #3b52ca to #ca3b52 (warmer red) */
-  --accent-hover: #e34a63;   /* Changed from #4a63e3 to #e34a63 */
+  --accent: #ca3b52;         
+  --accent-hover: #e34a63;   
   --border: #1f2127;
   --table-hover: #16181f;
 }
@@ -134,7 +134,7 @@ body {
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  text-align: center; /* Added this line */
+  text-align: center; 
 }
 
 .items-table tbody tr {
@@ -153,7 +153,7 @@ body {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  vertical-align: middle; /* Added this line */
+  vertical-align: middle; 
 }
 
 .items-table th {
@@ -216,7 +216,7 @@ body {
 }
 
 .pagination button.edge-button {
-  margin: 0 1.5rem;  /* Added margin for first/last buttons */
+  margin: 0 1.5rem;  
 }
 
 .pagination button:hover:not(:disabled) {
@@ -242,7 +242,7 @@ body {
   <div class="filter-row">
     <input type="text" class="search-bar" placeholder="Search..." id="searchInput">
     <div class="type-filters" id="typeFilters">
-      <!-- Type filters will be populated here -->
+      
     </div>
     <a href="https://discord.gg/9ykXAGHCT9" class="discord-button">
         Discord
@@ -260,13 +260,13 @@ body {
         </tr>
       </thead>
       <tbody id="itemsContainer">
-        <!-- Items will be populated here -->
+        
       </tbody>
     </table>
   </div>
 
   <div class="pagination" id="pagination">
-    <!-- Pagination buttons will be populated here -->
+    
   </div>
 </div>
 
@@ -415,12 +415,12 @@ function updateFilteredItems() {
                          item.type === activeType);
     return matchesSearch && matchesType;
   });
-  currentPage = 1; // Reset to first page when filtering
+  currentPage = 1; 
   renderTable(filteredItems);
 }
 
 searchInput.addEventListener('input', updateFilteredItems);
 
-// Initial render
+
 </script>
 </body></html>
