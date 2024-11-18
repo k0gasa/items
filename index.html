@@ -134,6 +134,7 @@ body {
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  text-align: center; /* Added this line */
 }
 
 .items-table tbody tr {
@@ -152,6 +153,7 @@ body {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  vertical-align: middle; /* Added this line */
 }
 
 .items-table th {
@@ -326,8 +328,8 @@ function renderTable(itemsToRender) {
   
   const createTableRow = (item) => `
     <tr>
-      <td>
-        <div style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+      <td style="text-align: center;">
+        <div style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
           <img 
             src="${item.Photo}" 
             alt="${item.item} preview" 
@@ -338,9 +340,9 @@ function renderTable(itemsToRender) {
           >
         </div>
       </td>
-      <td>${item.ID}</td>
-      <td>${item.item}</td>
-      <td><span class="type-badge">${item.type}</span></td>
+      <td style="text-align: center;">${item.ID}</td>
+      <td style="text-align: center;">${item.item}</td>
+      <td style="text-align: center;"><span class="type-badge">${item.type}</span></td>
     </tr>
   `;
 
