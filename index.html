@@ -33,6 +33,7 @@ body {
 
 .container {
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -45,6 +46,7 @@ body {
   align-items: center;
   width: 100%;
   margin-bottom: 0.5rem;
+  position: relative;
 }
 
 .discord-button {
@@ -61,6 +63,11 @@ body {
   text-decoration: none;
   flex-shrink: 0;
   font-weight: bold;
+  margin-left: auto;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .discord-button:hover {
@@ -85,12 +92,35 @@ body {
   border-color: var(--accent);
 }
 
+.dataset-selector {
+  padding: 0.625rem 2.25rem 0.625rem 1.25rem; /* Add padding to account for arrow */
+  background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='4' viewBox='0 0 8 4' fill='none'%3E%3Cpath d='M4 4L0 0H8L4 4Z' fill='white'/%3E%3C/svg%3E") no-repeat;
+  background-position: right 0.875rem center;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.875rem;
+  margin-right: 0.75rem;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.dataset-selector option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 0.625rem 1.25rem;
+}
+
 .type-filters {
   display: flex;
   gap: 0.75rem;
   margin-bottom: 0;
   flex-grow: 1;
   padding-bottom: 0;
+  min-height: 38px;
+  margin-right: 120px;
+  overflow-x: auto;
 }
 
 .type-filters::-webkit-scrollbar {
@@ -124,6 +154,7 @@ body {
 
 .table-container {
   margin-bottom: 0;
+  width: 100%;
 }
 
 .items-table {
@@ -235,14 +266,36 @@ body {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.copy-button {
+  padding: 0.5rem 1rem;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+}
+
+.copy-button:hover {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: white;
+}
 </style>
 </head>
 <body>
 <div class="container">
   <div class="filter-row">
+    <select class="dataset-selector" id="datasetSelector">
+      <option value="garments">Garments</option>
+      <option value="furnitures">Furnitures</option>
+    </select>
     <input type="text" class="search-bar" placeholder="Search..." id="searchInput">
     <div class="type-filters" id="typeFilters">
-      
     </div>
     <a href="https://discord.gg/9ykXAGHCT9" class="discord-button">
         Discord
@@ -257,33 +310,43 @@ body {
           <th>ID</th>
           <th>Name</th>
           <th>Type</th>
+          <th>Unity3D</th>
         </tr>
       </thead>
       <tbody id="itemsContainer">
-        
       </tbody>
     </table>
   </div>
 
   <div class="pagination" id="pagination">
-    
   </div>
 </div>
 
 <script>
-let items = [];
+async function copyToClipboard(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (err) {
+    console.error('Failed to copy text: ', err);
+  }
+}
 
-fetch('https://k0gasa.github.io/items/garments.json')
-  .then(response => response.json())
-  .then(data => {
-    items = data;
-    filteredItems = [...items];
-    renderTable(items);
-  })
-  .catch(error => {
-    console.error('Error loading items:', error);
-    // Optionally add error handling UI here
-  });
+let items = [];
+const datasetSelector = document.getElementById('datasetSelector');
+
+function loadData(dataset = 'garments') {
+  fetch(`https://k0gasa.github.io/items/${dataset}.json`)
+    .then(response => response.json())
+    .then(data => {
+      items = data.filter(item => item && item.id); // Filter out null/empty items
+      filteredItems = [...items];
+      updateTypeFilters(dataset);
+      renderTable(items);
+    })
+    .catch(error => {
+      console.error('Error loading items:', error);
+    });
+}
 
 const itemsContainer = document.getElementById('itemsContainer');
 const searchInput = document.getElementById('searchInput');
@@ -294,27 +357,30 @@ const ITEMS_PER_PAGE = 4;
 let currentPage = 1;
 let activeType = 'all';
 
-const predefinedTypes = [
-  'all',
-  'torso',
-  'hair',
-  'legs',
-  'face',
-  'feet',
-  'hands',
-  'skinz',
-  'other'
+const garmentTypes = [
+  'all', 'torso', 'hair', 'legs', 'face', 'feet', 'other'
 ];
 
-typeFiltersContainer.innerHTML = predefinedTypes.map(type => `
-  <button 
-    class="type-filter ${type === 'all' ? 'active' : ''}" 
-    data-type="${type}"
-    onclick="filterByType('${type}')"
-  >
-    ${type.charAt(0).toUpperCase() + type.slice(1)}
-  </button>
-`).join('');
+const furnitureTypes = ['all'];
+
+function updateTypeFilters(dataset) {
+  const types = dataset === 'garments' ? garmentTypes : furnitureTypes;
+  activeType = 'all';
+  
+  typeFiltersContainer.style.display = dataset === 'furnitures' ? 'none' : 'flex';
+  typeFiltersContainer.innerHTML = types.map(type => `
+    <button 
+      class="type-filter ${type === 'all' ? 'active' : ''}" 
+      data-type="${type}"
+      onclick="filterByType('${type}')"
+    >
+      ${type.charAt(0).toUpperCase() + type.slice(1)}
+    </button>
+  `).join('');
+  
+  // Force container width to be consistent
+  document.querySelector('.container').style.width = '100%';
+}
 
 function filterByType(type) {
   activeType = type;
@@ -325,30 +391,77 @@ function filterByType(type) {
   updateFilteredItems();
 }
 
+let filteredItems = [...items];
+
+function updateFilteredItems() {
+  const searchTerm = searchInput.value.toLowerCase();
+  const dataset = datasetSelector.value;
+  
+  filteredItems = items.filter(item => {
+    if (!item || !item.id) return false;
+    
+    const matchesSearch = (item.title?.toLowerCase() || '').includes(searchTerm) || 
+                         (item.id?.toString() || '').includes(searchTerm);
+    
+    // Only apply type filtering for garments
+    if (dataset === 'garments') {
+      const mainTypes = ['torso', 'hair', 'legs', 'face', 'feet']; // Removed 'hands'
+      const itemType = (item.type || '').toLowerCase();
+      const isOtherType = !mainTypes.includes(itemType);
+      const matchesType = activeType === 'all' || 
+                         (activeType === 'other' ? isOtherType : 
+                         itemType === activeType);
+      return matchesSearch && matchesType;
+    }
+    
+    // For furniture, just use search filtering
+    return matchesSearch;
+  });
+  
+  currentPage = 1;
+  renderTable(filteredItems);
+}
+
 function renderTable(itemsToRender) {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedItems = itemsToRender.slice(startIndex, endIndex);
+  const dataset = datasetSelector.value;
   
-  const createTableRow = (item) => `
-    <tr>
-      <td style="text-align: center;">
-        <div style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
-          <img 
-            src="${item.Photo}" 
-            alt="${item.item} preview" 
-            class="table-image" 
-            style="opacity: 0; transition: opacity 0.3s ease;"
-            onload="this.style.opacity = '1'"
-            loading="lazy"
-          >
-        </div>
-      </td>
-      <td style="text-align: center;">${item.ID}</td>
-      <td style="text-align: center;">${item.item}</td>
-      <td style="text-align: center;"><span class="type-badge">${item.type}</span></td>
-    </tr>
-  `;
+  const createTableRow = (item) => {
+    const unityLink = dataset === 'garments' ? item.unknown_51 : item.unknown_60;
+    const itemType = dataset === 'garments' ? item.type : item.triggerType;
+    const displayType = (!itemType || itemType === '' || itemType === 'null') ? 'NULL' : itemType;
+    
+    return `
+      <tr>
+        <td style="text-align: center;">
+          <div style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <img 
+              src="${item.thumbnailSd || ''}" 
+              alt="${item.title || ''} preview" 
+              class="table-image" 
+              style="opacity: 0; transition: opacity 0.3s ease;"
+              onload="this.style.opacity = '1'"
+              loading="lazy"
+            >
+          </div>
+        </td>
+        <td style="text-align: center;">${item.id || ''}</td>
+        <td style="text-align: center;">${item.title || ''}</td>
+        <td style="text-align: center;">
+          <span class="type-badge">
+            ${displayType}
+          </span>
+        </td>
+        <td style="text-align: center;">
+          <button class="copy-button" onclick="copyToClipboard('${unityLink || ''}')">
+            Copy Link
+          </button>
+        </td>
+      </tr>
+    `;
+  };
 
   itemsContainer.innerHTML = paginatedItems.map(createTableRow).join('');
   renderPagination(itemsToRender.length);
@@ -382,7 +495,7 @@ function renderPagination(totalItems) {
       <button onclick="changePage(${currentPage + 1})">
         ${currentPage + 1}
       </button>
-  `;
+    `;
   }
 
   paginationHTML += `
@@ -402,25 +515,12 @@ function changePage(page) {
   renderTable(filteredItems);
 }
 
-let filteredItems = [...items];
-
-function updateFilteredItems() {
-  const searchTerm = searchInput.value.toLowerCase();
-  filteredItems = items.filter(item => {
-    const matchesSearch = item.item.toLowerCase().includes(searchTerm) || 
-                         item.ID.includes(searchTerm);
-    const matchesType = activeType === 'all' || 
-                       (activeType === 'other' ? 
-                         ['wings', 'symbz', 'tattoo', 'accessory'].includes(item.type) : 
-                         item.type === activeType);
-    return matchesSearch && matchesType;
-  });
-  currentPage = 1; 
-  renderTable(filteredItems);
-}
-
 searchInput.addEventListener('input', updateFilteredItems);
+datasetSelector.addEventListener('change', (e) => {
+  loadData(e.target.value);
+});
 
-
+// Initial load
+loadData('garments');
 </script>
 </body></html>
