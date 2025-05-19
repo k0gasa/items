@@ -593,10 +593,11 @@ const garmentTypes = [
 const furnitureTypes = ['all', 'marketpod'];
 
 function updateTypeFilters(dataset) {
-  const types = dataset === 'garments' ? garmentTypes : furnitureTypes;
+  const types = dataset === 'garments' ? garmentTypes : 
+                dataset === 'furnitures' ? furnitureTypes : [];
   activeType = 'all';
   
-  typeFiltersContainer.style.display = 'flex';
+  typeFiltersContainer.style.display = types.length > 0 ? 'flex' : 'none';
   typeFiltersContainer.innerHTML = types.map(type => `
     <button 
       class="type-filter ${type === 'all' ? 'active' : ''}" 
@@ -607,7 +608,6 @@ function updateTypeFilters(dataset) {
     </button>
   `).join('');
   
-  // Force container width to be consistent
   document.querySelector('.container').style.width = '100%';
 }
 
@@ -638,7 +638,10 @@ function updateFilteredItems() {
                        (id?.toString() || '').includes(searchTerm);
     
     if (dataset === 'units') {
-      const tags = parseTags(item.ExtraData);
+      let tags = parseTags(item.ExtraData);
+      if (item.staging) {
+        tags.push('staging');
+      }
       const matchesTag = tags.some(tag => tag.toLowerCase().includes(searchTerm));
       matchesSearch = matchesSearch || matchesTag;
     }
@@ -688,8 +691,11 @@ function parseTags(extraData) {
   try {
     if (!extraData) return [];
     const data = JSON.parse(extraData);
-    if (!data.tags) return [];
-    return Object.keys(data.tags).filter(tag => tag !== 'unitz');
+    let tags = [];
+    if (data.tags) {
+      tags = Object.keys(data.tags).filter(tag => tag !== 'unitz');
+    }
+    return tags;
   } catch (e) {
     return [];
   }
@@ -777,7 +783,10 @@ function renderTable(itemsToRender) {
                     dataset === 'furnitures' ? item.triggerType :
                     'Unit';
     const displayType = (!itemType || itemType === '' || itemType === 'null') ? 'NULL' : itemType;
-    const tags = dataset === 'units' ? parseTags(item.ExtraData) : [];
+    let tags = dataset === 'units' ? parseTags(item.ExtraData) : [];
+    if (dataset === 'units' && item.staging) {
+      tags.push('staging');
+    }
     
     const tagDisplay = dataset === 'units' ? (
       tags.length > 0 ? `
