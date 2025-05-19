@@ -47,6 +47,41 @@ body {
   width: 100%;
   margin-bottom: 0.5rem;
   position: relative;
+  padding-left: 0;
+}
+
+.view-toggle {
+  position: relative;
+  padding: 0.625rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  margin-right: 0.75rem;
+}
+
+.view-toggle:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.view-toggle.active {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.view-toggle svg {
+  width: 20px;
+  height: 20px;
 }
 
 .discord-button {
@@ -72,7 +107,7 @@ body {
 
 .discord-button:hover {
   background: #4752C4;
-  transform: translateY(-1px);
+  transform: translateY(-50%);
 }
 
 .search-bar {
@@ -93,7 +128,7 @@ body {
 }
 
 .dataset-selector {
-  padding: 0.625rem 2.25rem 0.625rem 1.25rem; /* Add padding to account for arrow */
+  padding: 0.625rem 2.25rem 0.625rem 1.25rem;
   background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='4' viewBox='0 0 8 4' fill='none'%3E%3Cpath d='M4 4L0 0H8L4 4Z' fill='white'/%3E%3C/svg%3E") no-repeat;
   background-position: right 0.875rem center;
   border: 1px solid var(--accent);
@@ -104,6 +139,32 @@ body {
   margin-right: 0.75rem;
   appearance: none;
   -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-focus-ring-color: transparent;
+  box-shadow: none !important;
+}
+
+.dataset-selector:focus {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-focus-ring-color: transparent;
+  box-shadow: none !important;
+}
+
+.dataset-selector::-ms-expand {
+  display: none;
+}
+
+.dataset-selector::-webkit-focus-inner {
+  border: 0;
+  outline: none;
+}
+
+.dataset-selector:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .dataset-selector option {
@@ -155,6 +216,12 @@ body {
 .table-container {
   margin-bottom: 0;
   width: 100%;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.table-container.loading {
+  opacity: 0;
 }
 
 .items-table {
@@ -165,7 +232,8 @@ body {
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  text-align: center; 
+  text-align: center;
+  table-layout: fixed;
 }
 
 .items-table tbody tr {
@@ -184,7 +252,40 @@ body {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  vertical-align: middle; 
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.items-table th:nth-child(1),
+.items-table td:nth-child(1) {
+  width: 120px;
+}
+
+.items-table th:nth-child(2),
+.items-table td:nth-child(2) {
+  width: 80px;
+}
+
+.items-table th:nth-child(3),
+.items-table td:nth-child(3) {
+  width: 200px;
+}
+
+.items-table th:nth-child(4),
+.items-table td:nth-child(4) {
+  width: 120px;
+}
+
+.items-table th:nth-child(5),
+.items-table td:nth-child(5) {
+  width: 200px;
+}
+
+.items-table th:nth-child(6),
+.items-table td:nth-child(6) {
+  width: 120px;
 }
 
 .items-table th {
@@ -230,9 +331,10 @@ body {
 .pagination {
   display: flex;
   justify-content: center;
-  gap: 0.75rem;
-  margin: 0.5rem 0;
-  padding: 0.5rem 0;
+  gap: 0.5rem;
+  margin: 0.15rem 0;
+  padding: 0.15rem 0;
+  position: relative;
 }
 
 .pagination button {
@@ -285,14 +387,96 @@ body {
   border-color: var(--accent-hover);
   color: white;
 }
+
+.grid-container {
+  display: none;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
+  width: 100%;
+  margin-bottom: 0.15rem;
+  padding: 0.25rem;
+}
+
+.grid-item {
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  aspect-ratio: 1.15;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
+  border: 1px solid var(--border);
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+.grid-item:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+.grid-image-section {
+  flex: 0 0 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  min-height: 0;
+  padding: 0.5rem;
+}
+
+.grid-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 4px;
+  margin: 0;
+  display: block;
+}
+
+.grid-title-section {
+  flex: 0 0 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  width: 100%;
+  min-height: 0;
+}
+
+.grid-title {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  padding: 0.35rem 0.25rem;
+  letter-spacing: 0.2px;
+  line-height: 1.2;
+}
 </style>
 </head>
 <body>
 <div class="container">
   <div class="filter-row">
+    <button class="view-toggle" id="viewToggle" onclick="toggleView()">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 2H8V8H2V2Z" fill="currentColor"/>
+        <path d="M2 11H8V17H2V11Z" fill="currentColor"/>
+        <path d="M11 2H17V8H11V2Z" fill="currentColor"/>
+        <path d="M11 11H17V17H11V11Z" fill="currentColor"/>
+      </svg>
+    </button>
     <select class="dataset-selector" id="datasetSelector">
       <option value="garments">Garments</option>
       <option value="furnitures">Furnitures</option>
+      <option value="units">Units</option>
     </select>
     <input type="text" class="search-bar" placeholder="Search..." id="searchInput">
     <div class="type-filters" id="typeFilters">
@@ -309,13 +493,17 @@ body {
           <th>Image</th>
           <th>ID</th>
           <th>Name</th>
-          <th>Type</th>
-          <th>Unity3D</th>
+          <th id="typeColumn">Type</th>
+          <th id="tagsColumn">Tags</th>
+          <th id="unityColumn">Unity3D</th>
         </tr>
       </thead>
       <tbody id="itemsContainer">
       </tbody>
     </table>
+  </div>
+
+  <div class="grid-container" id="gridContainer">
   </div>
 
   <div class="pagination" id="pagination">
@@ -335,16 +523,56 @@ let items = [];
 const datasetSelector = document.getElementById('datasetSelector');
 
 function loadData(dataset = 'garments') {
-  fetch(`https://k0gasa.github.io/items/${dataset}.json`)
+  const fileMap = {
+    'garments': 'garments.json',
+    'furnitures': 'furnitures.json',
+    'units': 'parsed_units.json'
+  };
+  
+  // Show loading state
+  const tableContainer = document.querySelector('.table-container');
+  tableContainer.classList.add('loading');
+  
+  // Show/hide columns based on dataset
+  const typeColumn = document.getElementById('typeColumn');
+  const unityColumn = document.getElementById('unityColumn');
+  const tagsColumn = document.getElementById('tagsColumn');
+  
+  if (dataset === 'units') {
+    typeColumn.style.display = 'none';
+    unityColumn.style.display = 'none';
+    tagsColumn.style.display = '';
+  } else {
+    typeColumn.style.display = '';
+    unityColumn.style.display = '';
+    tagsColumn.style.display = 'none';
+  }
+  
+  fetch(`https://k0gasa.github.io/items/${fileMap[dataset]}`)
     .then(response => response.json())
     .then(data => {
-      items = data.filter(item => item && item.id); // Filter out null/empty items
+      // Clear search input when changing datasets
+      searchInput.value = '';
+      
+      // Process data based on dataset
+      if (dataset === 'units') {
+        items = data.Width.filter(item => item && item.Id);
+      } else {
+        items = data.filter(item => item && item.id);
+      }
+      
       filteredItems = [...items];
       updateTypeFilters(dataset);
-      renderTable(items);
+      renderCurrentView();
+      
+      // Remove loading state after render
+      setTimeout(() => {
+        tableContainer.classList.remove('loading');
+      }, 50);
     })
     .catch(error => {
       console.error('Error loading items:', error);
+      tableContainer.classList.remove('loading');
     });
 }
 
@@ -354,6 +582,7 @@ const paginationContainer = document.getElementById('pagination');
 const typeFiltersContainer = document.getElementById('typeFilters');
 
 const ITEMS_PER_PAGE = 4;
+const GRID_ITEMS_PER_PAGE = 18; // 6x3 grid
 let currentPage = 1;
 let activeType = 'all';
 
@@ -361,13 +590,13 @@ const garmentTypes = [
   'all', 'torso', 'hair', 'legs', 'face', 'feet', 'other'
 ];
 
-const furnitureTypes = ['all'];
+const furnitureTypes = ['all', 'marketpod'];
 
 function updateTypeFilters(dataset) {
   const types = dataset === 'garments' ? garmentTypes : furnitureTypes;
   activeType = 'all';
   
-  typeFiltersContainer.style.display = dataset === 'furnitures' ? 'none' : 'flex';
+  typeFiltersContainer.style.display = 'flex';
   typeFiltersContainer.innerHTML = types.map(type => `
     <button 
       class="type-filter ${type === 'all' ? 'active' : ''}" 
@@ -398,77 +627,260 @@ function updateFilteredItems() {
   const dataset = datasetSelector.value;
   
   filteredItems = items.filter(item => {
-    if (!item || !item.id) return false;
+    if (!item) return false;
     
-    const matchesSearch = (item.title?.toLowerCase() || '').includes(searchTerm) || 
-                         (item.id?.toString() || '').includes(searchTerm);
+    const title = dataset === 'units' ? item.Title : item.title;
+    const id = dataset === 'units' ? item.Id : item.id;
     
-    // Only apply type filtering for garments
+    if (!searchTerm) return true;
+    
+    let matchesSearch = (title?.toLowerCase() || '').includes(searchTerm) || 
+                       (id?.toString() || '').includes(searchTerm);
+    
+    if (dataset === 'units') {
+      const tags = parseTags(item.ExtraData);
+      const matchesTag = tags.some(tag => tag.toLowerCase().includes(searchTerm));
+      matchesSearch = matchesSearch || matchesTag;
+    }
+    
     if (dataset === 'garments') {
-      const mainTypes = ['torso', 'hair', 'legs', 'face', 'feet']; // Removed 'hands'
+      const mainTypes = ['torso', 'hair', 'legs', 'face', 'feet'];
       const itemType = (item.type || '').toLowerCase();
       const isOtherType = !mainTypes.includes(itemType);
       const matchesType = activeType === 'all' || 
                          (activeType === 'other' ? isOtherType : 
                          itemType === activeType);
       return matchesSearch && matchesType;
+    } else if (dataset === 'furnitures') {
+      const itemType = (item.triggerType || '').toLowerCase();
+      const matchesType = activeType === 'all' || 
+                         (activeType === 'marketpod' && itemType.includes('marketpod'));
+      return matchesSearch && matchesType;
     }
     
-    // For furniture, just use search filtering
     return matchesSearch;
   });
   
+  if (!searchTerm) {
+    if (dataset === 'garments') {
+      const mainTypes = ['torso', 'hair', 'legs', 'face', 'feet'];
+      filteredItems = filteredItems.filter(item => {
+        const itemType = (item.type || '').toLowerCase();
+        const isOtherType = !mainTypes.includes(itemType);
+        return activeType === 'all' || 
+               (activeType === 'other' ? isOtherType : 
+               itemType === activeType);
+      });
+    } else if (dataset === 'furnitures') {
+      filteredItems = filteredItems.filter(item => {
+        const itemType = (item.triggerType || '').toLowerCase();
+        return activeType === 'all' || 
+               (activeType === 'marketpod' && itemType.includes('marketpod'));
+      });
+    }
+  }
+  
   currentPage = 1;
-  renderTable(filteredItems);
+  renderCurrentView();
+}
+
+function parseTags(extraData) {
+  try {
+    if (!extraData) return [];
+    const data = JSON.parse(extraData);
+    if (!data.tags) return [];
+    return Object.keys(data.tags).filter(tag => tag !== 'unitz');
+  } catch (e) {
+    return [];
+  }
+}
+
+let isGridView = false;
+const viewToggle = document.getElementById('viewToggle');
+const gridContainer = document.getElementById('gridContainer');
+
+function toggleView() {
+  isGridView = !isGridView;
+  const viewToggleBtn = document.getElementById('viewToggle');
+  viewToggleBtn.classList.toggle('active');
+  viewToggleBtn.innerHTML = `
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      ${isGridView ? 
+        `<path d="M2 2H18V4H2V2Z" fill="currentColor"/>
+         <path d="M2 8H18V10H2V8Z" fill="currentColor"/>
+         <path d="M2 14H18V16H2V14Z" fill="currentColor"/>` :
+        `<path d="M2 2H8V8H2V2Z" fill="currentColor"/>
+         <path d="M2 11H8V17H2V11Z" fill="currentColor"/>
+         <path d="M11 2H17V8H11V2Z" fill="currentColor"/>
+         <path d="M11 11H17V17H11V11Z" fill="currentColor"/>`
+      }
+    </svg>
+  `;
+  document.querySelector('.table-container').style.display = isGridView ? 'none' : 'block';
+  gridContainer.style.display = isGridView ? 'grid' : 'none';
+  renderCurrentView();
+}
+
+function renderCurrentView() {
+  if (isGridView) {
+    renderGridView(filteredItems);
+  } else {
+    renderTable(filteredItems);
+  }
+}
+
+function renderGridView(itemsToRender) {
+  const itemsPerPage = isGridView ? GRID_ITEMS_PER_PAGE : ITEMS_PER_PAGE;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedItems = itemsToRender.slice(startIndex, endIndex);
+  const dataset = datasetSelector.value;
+  
+  gridContainer.innerHTML = paginatedItems.map(item => `
+    <div class="grid-item">
+      <div class="grid-image-section">
+        ${(dataset === 'units' ? item.ThumbnailHd : item.thumbnailSd) ? `
+          <img 
+            src="${dataset === 'units' ? item.ThumbnailHd : item.thumbnailSd}" 
+            alt="${dataset === 'units' ? item.Title : item.title || ''} preview" 
+            class="grid-image" 
+            loading="lazy"
+            onerror="this.style.display = 'none'"
+          >
+        ` : ''}
+      </div>
+      <div class="grid-title-section">
+        <div class="grid-title">${dataset === 'units' ? item.Title : item.title || ''}</div>
+      </div>
+    </div>
+  `).join('');
+  
+  renderPagination(itemsToRender.length);
 }
 
 function renderTable(itemsToRender) {
+  if (isGridView) {
+    renderGridView(itemsToRender);
+    return;
+  }
+  
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedItems = itemsToRender.slice(startIndex, endIndex);
   const dataset = datasetSelector.value;
   
   const createTableRow = (item) => {
-    const unityLink = dataset === 'garments' ? item.unknown_51 : item.unknown_60;
-    const itemType = dataset === 'garments' ? item.type : item.triggerType;
+    const unityLink = dataset === 'garments' ? item.unknown_51 : 
+                     dataset === 'furnitures' ? item.unknown_60 :
+                     item.Swf;
+    const itemType = dataset === 'garments' ? item.type : 
+                    dataset === 'furnitures' ? item.triggerType :
+                    'Unit';
     const displayType = (!itemType || itemType === '' || itemType === 'null') ? 'NULL' : itemType;
+    const tags = dataset === 'units' ? parseTags(item.ExtraData) : [];
+    
+    const tagDisplay = dataset === 'units' ? (
+      tags.length > 0 ? `
+        <div class="tag-container" style="position: relative; display: inline-block; min-width: 100px;">
+          ${tags.slice(0, 2).map(tag => `
+            <span class="type-badge" style="margin: 2px; position: relative;">
+              ${tag}
+            </span>
+          `).join('')}
+          ${tags.length > 2 ? `
+            <span style="
+              font-size: 0.75rem;
+              color: var(--text-secondary);
+              margin-left: 4px;
+              vertical-align: middle;
+            ">+ ${tags.length - 2} others</span>
+            <div class="tag-tooltip" style="
+              position: absolute;
+              top: 100%;
+              left: 50%;
+              transform: translateX(-50%);
+              background: var(--bg-secondary);
+              border: 1px solid var(--border);
+              border-radius: 6px;
+              padding: 8px;
+              z-index: 1000;
+              white-space: nowrap;
+              opacity: 0;
+              visibility: hidden;
+              transition: opacity 0.2s ease, visibility 0.2s ease;
+              margin-top: 5px;
+              box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            ">
+              ${tags.filter(tag => tag !== 'unitz_plain').join(', ')}
+            </div>
+          ` : ''}
+        </div>
+      ` : '<span style="color: var(--text-secondary); font-size: 0.75rem;">None</span>'
+    ) : '';
     
     return `
       <tr>
         <td style="text-align: center;">
           <div style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
-            <img 
-              src="${item.thumbnailSd || ''}" 
-              alt="${item.title || ''} preview" 
-              class="table-image" 
-              style="opacity: 0; transition: opacity 0.3s ease;"
-              onload="this.style.opacity = '1'"
-              loading="lazy"
-            >
+            ${(dataset === 'units' ? item.ThumbnailHd : item.thumbnailSd) ? `
+              <img 
+                src="${dataset === 'units' ? item.ThumbnailHd : item.thumbnailSd}" 
+                alt="${dataset === 'units' ? item.Title : item.title || ''} preview" 
+                class="table-image" 
+                style="opacity: 0; transition: opacity 0.3s ease;"
+                onload="this.style.opacity = '1'"
+                onerror="this.style.display = 'none'"
+                loading="lazy"
+              >
+            ` : ''}
           </div>
         </td>
-        <td style="text-align: center;">${item.id || ''}</td>
-        <td style="text-align: center;">${item.title || ''}</td>
-        <td style="text-align: center;">
-          <span class="type-badge">
-            ${displayType}
-          </span>
-        </td>
-        <td style="text-align: center;">
-          <button class="copy-button" onclick="copyToClipboard('${unityLink || ''}')">
-            Copy Link
-          </button>
-        </td>
+        <td style="text-align: center;">${item.Id || item.id || ''}</td>
+        <td style="text-align: center;">${dataset === 'units' ? item.Title : item.title || ''}</td>
+        ${dataset !== 'units' ? `
+          <td style="text-align: center;">
+            <span class="type-badge">
+              ${displayType}
+            </span>
+          </td>
+        ` : ''}
+        ${dataset === 'units' ? `
+          <td style="text-align: center;">
+            ${tagDisplay}
+          </td>
+        ` : ''}
+        ${dataset !== 'units' ? `
+          <td style="text-align: center;">
+            <button class="copy-button" onclick="copyToClipboard('${unityLink || ''}')">
+              Copy Link
+            </button>
+          </td>
+        ` : ''}
       </tr>
     `;
   };
 
   itemsContainer.innerHTML = paginatedItems.map(createTableRow).join('');
   renderPagination(itemsToRender.length);
+  
+  document.querySelectorAll('.tag-container').forEach(container => {
+    const tooltip = container.querySelector('.tag-tooltip');
+    if (tooltip) {
+      container.addEventListener('mouseenter', () => {
+        tooltip.style.opacity = '1';
+        tooltip.style.visibility = 'visible';
+      });
+      container.addEventListener('mouseleave', () => {
+        tooltip.style.opacity = '0';
+        tooltip.style.visibility = 'hidden';
+      });
+    }
+  });
 }
 
 function renderPagination(totalItems) {
-  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  const itemsPerPage = isGridView ? GRID_ITEMS_PER_PAGE : ITEMS_PER_PAGE;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
   
   let paginationHTML = `
     <button class="edge-button" onclick="changePage(1)" ${currentPage === 1 ? 'disabled' : ''}>
@@ -512,7 +924,7 @@ function changePage(page) {
   if (page < 1 || page > totalPages) return;
   
   currentPage = page;
-  renderTable(filteredItems);
+  renderCurrentView();
 }
 
 searchInput.addEventListener('input', updateFilteredItems);
